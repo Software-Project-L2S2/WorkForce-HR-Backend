@@ -1,0 +1,33 @@
+# .NET
+**/bin/
+**/obj/
+**/appsettings.Development.json
+*.user
+*.suo
+*.csproj.user
+*.vs/
+.vs/
+.vscode/
+*.swagger
+
+# Database
+*.mdf
+*.ldf
+
+# NuGet
+**/packages/
+*.nupkg
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+
+# Misc
+*.log
+*.sql
+*.cache
