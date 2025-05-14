@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using WorkforceAPI.Models;
 using WorkforceAPI.Services;
@@ -9,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace WorkforceAPI.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class EmployeesController : ControllerBase
@@ -25,47 +23,24 @@ namespace WorkforceAPI.Controllers
             _logger = logger;
         }
 
-        // GET: api/employees (HR & Admin)
-        [Authorize(Roles = "HR,Admin")]
+        
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Employee>>> GetEmployees(
-            [FromQuery] string? department,
-            [FromQuery] string? jobTitle,
-            [FromQuery] int? employeeID)
+        public async Task<ActionResult<List<Employee>>> GetEmployees()
         {
             try
             {
-                var employees = await _service.GetFilteredEmployeesAsync(department, jobTitle, employeeID);
+                var employees = await _service.GetAllEmployeesAsync();
                 return Ok(employees);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error fetching employees");
+                _logger.LogError(ex, "Error fetching all employees");
                 return StatusCode(500, "Server error: Failed to retrieve employees");
             }
         }
 
-        // GET: api/employees/5
-        [Authorize(Roles = "HR,Admin")]
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Employee>> GetEmployee(int id)
-        {
-            try
-            {
-                var employee = await _service.GetEmployeeByIdAsync(id);
-                return employee == null ? NotFound() : Ok(employee);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error fetching employee {Id}", id);
-                return StatusCode(500, "Server error: Failed to retrieve employee");
-            }
-        }
-
-        // GET: api/employees/headcount
-        [Authorize(Roles = "HR,Admin")]
         [HttpGet("headcount")]
-        public async Task<ActionResult<IEnumerable<EmployeeService.DepartmentHeadCount>>> GetDepartmentHeadCount()
+        public async Task<ActionResult<List<EmployeeService.DepartmentHeadCount>>> GetDepartmentHeadCount()
         {
             try
             {
@@ -79,10 +54,9 @@ namespace WorkforceAPI.Controllers
             }
         }
 
-        // GET: api/employees/search
-        [Authorize(Roles = "HR,Admin")]
+        /
         [HttpGet("search")]
-        public async Task<ActionResult<IEnumerable<Employee>>> SearchEmployees([FromQuery] string term)
+        public async Task<ActionResult<List<Employee>>> SearchEmployees([FromQuery] string term)
         {
             try
             {
@@ -91,7 +65,7 @@ namespace WorkforceAPI.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Search error for term: {Term}", term);
+                _logger.LogError(ex, $"Search error for term: {term}");
                 return StatusCode(500, "Server error: Failed to perform search");
             }
         }
